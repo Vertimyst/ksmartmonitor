@@ -1,0 +1,27 @@
+{
+    "KPlugin": {
+        "Authors": [
+            {
+                "Email": "vertimyst@protonmail.com",
+                "Name": "Vertimyst"
+            }
+        ],
+        "Category": "System Information",
+        "Description": "Monitor SMART status of your drives",
+        "Icon": "drive-harddisk",
+        "Id": "com.github.vertimyst.ksmartmonitor",
+        "License": "GPL-2.0+",
+        "Name": "KSMART Monitor",
+        "Version": "1.0",
+        "Website": "https://github.com/Vertimyst/ksmartmonitor",
+        "FormFactors": [
+            "desktop",
+            "tablet",
+            "handset"
+        ]
+    },
+    "KPackageStructure": "Plasma/Applet",
+    "X-Plasma-API": "declarativeappletscript",
+    "X-Plasma-API-Minimum-Version": "6.0",
+    "X-Plasma-MainScript": "contents/ui/main.qml"
+}
