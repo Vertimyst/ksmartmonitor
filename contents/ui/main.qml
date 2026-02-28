@@ -265,21 +265,21 @@ PlasmoidItem {
         }
     }
     
-    // DataSource for executing shell commands
+    // DataSource for executing the KAuth CLI tool
     Plasma5Support.DataSource {
         id: executable
         engine: "executable"
         connectedSources: []
-        
+
         onNewData: function(source, data) {
             var stdout = data["stdout"]
             var stderr = data["stderr"]
             var exitCode = data["exit code"]
-            
+
             disconnectSource(source)
-            
+
             if (exitCode === 0) {
-                Smart.parseSmartData(stdout)
+                parseKAuthResult(stdout)
                 root.lastUpdateTime = new Date()
             } else {
                 root.hasError = true
@@ -288,19 +288,35 @@ PlasmoidItem {
             }
         }
     }
-    
+
     function updateDriveData() {
-        // Command to get SMART data for all drives
-        // Detects NVMe drives and uses appropriate flags
-        var cmd = "smartctl --scan | awk '{print $1}' | while read drive; do " +
-                  "echo \"DRIVE:$drive\"; " +
-                  "if [[ \"$drive\" == *\"nvme\"* ]]; then " +
-                  "  sudo smartctl -A -H \"$drive\" 2>/dev/null || echo \"ERROR\"; " +
-                  "else " +
-                  "  sudo smartctl -A -H \"$drive\" 2>/dev/null || echo \"ERROR\"; " +
-                  "fi; " +
-                  "done"
-        
-        executable.connectSource(cmd)
+        console.log("Calling KAuth helper via CLI");
+        executable.connectSource("ksmartmonitor-cli")
+    }
+
+    function parseKAuthResult(jsonString) {
+        console.log("Parsing KAuth result");
+        try {
+            var result = JSON.parse(jsonString);
+            var drives = result.drives;
+
+            // Build the output string in the same format our parser expects
+            var output = "";
+            for (var i = 0; i < drives.length; i++) {
+                var drive = drives[i];
+                output += "DRIVE:" + drive.device + "\n";
+                if (drive.success) {
+                    output += drive.output + "\n";
+                } else {
+                    output += "ERROR\n";
+                }
+            }
+
+            Smart.parseSmartData(output);
+        } catch (e) {
+            console.log("Error parsing KAuth result:", e);
+            root.hasError = true;
+            root.errorMessage = "Error parsing SMART data: " + e;
+        }
     }
 }

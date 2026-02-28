@@ -1,0 +1,9 @@
+[Domain]
+Name=KSMART Monitor
+Icon=drive-harddisk
+
+[com.github.vertimyst.ksmartmonitor.getsmart]
+Name=Read SMART Data
+Description=Read SMART health data from drives
+Policy=yes
+Persistence=session

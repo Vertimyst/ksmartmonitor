@@ -16,77 +16,78 @@ A Plasma 6 widget to monitor the SMART status of your drives, displaying health 
 - Detailed expanded view with per-drive information
 ## Prerequisites
 
-1. **smartmontools** must be installed:
-   ```bash
-   # Debian/Ubuntu
-   sudo apt install smartmontools
-   
-   # Fedora
-   sudo dnf install smartmontools
-   
-   # Arch Linux
-   sudo pacman -S smartmontools
-   ```
+### Required Packages
 
-2. **Sudo permissions** for smartctl (required to read SMART data):
-   
-   Create a sudoers file to allow running smartctl without password:
-   ```bash
-   sudo visudo -f /etc/sudoers.d/smartctl
-   ```
-   
-   Add this line (replace `username` with your username):
-   ```
-   username ALL=(ALL) NOPASSWD: /usr/sbin/smartctl
-   ```
-   
-   Or for all users:
-   ```
-   ALL ALL=(ALL) NOPASSWD: /usr/sbin/smartctl
-   ```
-   
-   Save and exit. Test with:
-   ```bash
-   sudo smartctl -a /dev/sda
-   ```
+**smartmontools** must be installed:
+```bash
+# Debian/Ubuntu
+sudo apt install smartmontools
+
+# Fedora
+sudo dnf install smartmontools
+
+# Arch Linux
+sudo pacman -S smartmontools
+```
+
+### Build Dependencies
+
+Required to compile the KAuth helper:
+```bash
+# Debian/Ubuntu
+sudo apt install cmake extra-cmake-modules libkf6auth-dev qt6-base-dev build-essential
+
+# Fedora
+sudo dnf install cmake extra-cmake-modules kf6-kauth-devel qt6-qtbase-devel gcc-c++
+
+# Arch Linux
+sudo pacman -S cmake extra-cmake-modules kauth qt6-base base-devel
+```
 
 ## Installation
 
-### Method 1: Manual Installation
+This widget uses **KAuth** for secure, privileged access to SMART data.
 
-1. Copy the widget to the Plasma widgets directory:
+### Build and Install
+
+1. **Clone or download the repository**
+
+2. **Build the project:**
    ```bash
-   mkdir -p ~/.local/share/plasma/plasmoids/
-   cp -r plasma-smart-monitor ~/.local/share/plasma/plasmoids/com.github.vertimyst.ksmartmonitor
+   cd ksmartmonitor
+   mkdir build && cd build
+   cmake ..
+   make
    ```
 
-2. Restart Plasma Shell:
+3. **Install (requires root):**
    ```bash
-   kquitapp6 plasmashell && plasmashell &
+   sudo make install
    ```
-   
-   Or log out and back in.
 
-3. Add the widget to your panel or desktop:
-   - Right-click on panel → "Add Widgets"
+4. **Restart Plasma Shell:**
+   ```bash
+   kquitapp6 plasmashell && kstart plasmashell
+   ```
+
+5. **Add the widget:**
+   - Right-click on panel or desktop → "Add Widgets"
    - Search for "SMART Monitor"
-   - Drag it to your panel
+   - Add it to your panel or desktop
 
-### Method 2: Using kpackagetool6
+### Uninstall
 
 ```bash
-cd plasma-smart-monitor
-kpackagetool6 -t Plasma/Applet -i .
+cd build
+sudo make uninstall
 ```
 
-To update the widget:
+Or manually remove:
 ```bash
-kpackagetool6 -t Plasma/Applet -u .
-```
-
-To remove the widget:
-```bash
-kpackagetool6 -t Plasma/Applet -r com.github.vertimyst.ksmartmonitor
+sudo rm /usr/lib/kf6/kauth/smartmonitorhelper
+sudo rm /usr/bin/ksmartmonitor-cli
+sudo rm /usr/share/polkit-1/actions/com.github.vertimyst.ksmartmonitor.policy
+sudo rm -r /usr/share/plasma/plasmoids/com.github.vertimyst.ksmartmonitor
 ```
 
 ## Usage
@@ -105,13 +106,6 @@ Click on the widget to see detailed information:
 - Current temperature
 - Critical SMART attributes
 - Last update timestamp
-
-## Security Considerations
-
-This widget requires sudo access to read SMART data. The sudoers configuration allows running smartctl without a password. If this is a security concern:
-
-1. Use a more restrictive sudoers rule
-2. Only allow specific drives: `username ALL=(ALL) NOPASSWD: /usr/sbin/smartctl -A /dev/sda`
 
 ## License
 

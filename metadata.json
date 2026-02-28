@@ -12,7 +12,7 @@
         "Id": "com.github.vertimyst.ksmartmonitor",
         "License": "GPL-2.0+",
         "Name": "KSMART Monitor",
-        "Version": "1.0",
+        "Version": "1.1",
         "Website": "https://github.com/Vertimyst/ksmartmonitor",
         "FormFactors": [
             "desktop",
