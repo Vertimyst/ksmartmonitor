@@ -1,5 +1,7 @@
 # KDE Plasma 6 SMART Monitor Widget
 
+![Alternative Text](/screenshots/ksmartmonitor_1.png)
+
 A Plasma 6 widget to monitor the SMART status of your drives, displaying health status, temperature, and critical SMART attributes.
 
 ## Features
